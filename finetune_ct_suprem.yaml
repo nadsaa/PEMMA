@@ -1,0 +1,68 @@
+# Suprem finetuning configuration for CT scans - Pretraining phase
+
+# Experiment settings
+experiment_name: "suprem_swin_unetr_ct_pretraining"
+seed: 42
+device: "cuda"
+
+# Data settings
+data:
+  data_dir: "./dataset/hecktor"
+  modalities: ["ct"]
+  target_spacing: [1, 1, 1]  # Data is already resampled to this spacing
+  spatial_size: [96, 96, 96]
+  orientation: "RAS"
+  cache_rate: 0.2
+  num_workers: 12
+  persistent_cache: false
+  cache_dir: "./data/cache"
+  cross_validation: false
+  fold: 0
+  num_folds: 5
+  num_samples: 4  # Number of random crops per image
+  train_ratio: 0.8
+  val_ratio: 0.2
+
+# Model settings
+model:
+  name: "swin_unetr"
+  img_size: [96, 96, 96]
+  in_channels: 1  # CT only
+  out_channels: 3  # Background + tumor + lymph node
+  feature_size: 48
+  use_checkpoint: true  # Enable gradient checkpointing for memory efficiency
+  spatial_dims: 3
+  drop_rate: 0.0
+  depths: [2, 2, 2, 2]
+  num_heads: [3, 6, 12, 24]
+
+# Training settings
+training:
+  batch_size: 2  # Smaller batch size for pretraining
+  max_epochs: 20  # Shorter pretraining period
+  optimizer: "adamw"
+  learning_rate: 1.0e-4  # Lower learning rate for finetuning
+  weight_decay: 1.0e-5
+  loss: "dice_ce"
+  scheduler: "cosine"
+  val_interval: 5
+  save_interval: 5
+  save_dir: "./checkpoints/pretraining"
+  num_classes: 3  # Background + tumor + lymph node
+  sw_batch_size: 4
+  roi_size: [96, 96, 96]
+  early_stopping_patience: 10
+  experiment_name: "suprem_swin_unetr_ct_pretraining"
+
+# Logging settings
+logging:
+  use_wandb: false  # Disable wandb for pretraining test
+  wandb_project: "pemma"
+  wandb_entity: null
+
+# LoRA settings for parameter-efficient finetuning
+lora:
+  rank: 4
+  alpha: 8
+  dropout: 0.1
+  target_modules: ["qkv"] 

@@ -1,0 +1,62 @@
+# Training configuration for CT scans
+
+# Experiment settings
+experiment_name: "swin_unetr_ct_pretraining"
+seed: 786
+device: "cuda"
+# amp: true  # Removed as not being used
+
+# Data settings
+data:
+  data_dir: "./dataset/hecktor"
+  modalities: ["ct"]
+  target_spacing: [1, 1, 1]  # Data is already resampled to this spacing
+  spatial_size: [96, 96, 96]
+  orientation: "RAS"
+  cache_rate: 0.2
+  num_workers: 6
+  persistent_cache: false
+  cache_dir: "./data/cache"
+  cross_validation: false
+  fold: 0
+  num_folds: 5
+  num_samples: 2  # Number of random crops per image (default was 4)
+  train_ratio: 0.8  # Added for standard dataset preparation
+  val_ratio: 0.2  # Added for standard dataset preparation
+
+# Model settings
+model:
+  name: "swin_unetr"
+  img_size: [96, 96, 96]
+  in_channels: 1  # CT only
+  out_channels: 3  # Background + tumor + lymph node
+  feature_size: 48
+  use_checkpoint: true  # Enable gradient checkpointing for memory efficiency
+  spatial_dims: 3
+  drop_rate: 0.0
+  depths: [2, 2, 2, 2]
+  num_heads: [3, 6, 12, 24]
+
+# Training settings
+training:
+  batch_size: 3  # Per GPU batch size
+  max_epochs: 300
+  optimizer: "adamw"
+  learning_rate: 3.0e-4
+  weight_decay: 1.0e-5
+  loss: "dice_ce"
+  scheduler: "cosine"
+  val_interval: 20
+  save_interval: 1
+  save_dir: "./checkpoints/pretraining"
+  num_classes: 3  # Background + tumor + lymph node
+  sw_batch_size: 4
+  roi_size: [96, 96, 96]
+  early_stopping_patience: 20
+  experiment_name: "swin_unetr_ct_pretraining"
+
+# Logging settings
+logging:
+  use_wandb: true
+  wandb_project: "pemma"
+  wandb_entity: null 

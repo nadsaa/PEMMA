@@ -1,0 +1,38 @@
+# SwinUNETR model configuration
+
+# Data configuration
+data:
+  data_dir: "./dataset/hecktor/"
+  centers: ["CHUP", "CHUS", "CHUV", "HMR", "HGJ", "CHUM", "MDA"]
+  modalities: ["ct", "pet"]
+  train_ratio: 0.8
+  val_ratio: 0.2
+  cache_rate: 0.5
+  num_workers: 4
+
+# Model configuration
+model:
+  name: "swin_unetr"
+  in_channels: 1  # Will be overridden based on modalities
+  out_channels: 2  # Background + tumor
+  img_size: [96, 96, 96]
+  feature_size: 48
+  use_checkpoint: true
+
+# Training configuration
+training:
+  batch_size: 2
+  optimizer: "AdamW"
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-5
+  lr_scheduler: "cosine"
+  num_epochs: 200
+  loss_function: "DiceCELoss"
+  device: "cuda"
+
+# LoRA configuration
+lora:
+  rank: 4
+  alpha: 8
+  dropout: 0.1
+  target_modules: ["qkv"] 

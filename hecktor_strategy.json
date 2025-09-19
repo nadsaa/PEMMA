@@ -1,0 +1,102 @@
+{
+  "phases": {
+    "pretraining": {
+      "centers": [
+        "CHUS",
+        "CHUV",
+        "CHUM",
+        "CHUP"
+      ],
+      "modalities": [
+        "ct"
+      ],
+      "train_ratio": 0.8,
+      "val_ratio": 0.2,
+      "description": "Initial training using only CT data from four centers"
+    },
+    "multimodal_adaptation": {
+      "centers": [
+        "MDA"
+      ],
+      "modalities": [
+        "ct",
+        "pet"
+      ],
+      "train_ratio": 0.8,
+      "val_ratio": 0.2,
+      "description": "Adapting the model to use both CT and PET data from MDA center"
+    },
+    "continual_learning_task1": {
+      "centers": [
+        "HGJ"
+      ],
+      "modalities": [
+        "ct",
+        "pet"
+      ],
+      "train_ratio": 0.8,
+      "val_ratio": 0.2,
+      "description": "Continual learning task 1 using HGJ center data"
+    },
+    "continual_learning_task2": {
+      "centers": [
+        "HMR"
+      ],
+      "modalities": [
+        "ct",
+        "pet"
+      ],
+      "train_ratio": 0.8,
+      "val_ratio": 0.2,
+      "description": "Continual learning task 2 using HMR center data"
+    }
+  },
+  "center_details": {
+    "CHUS": {
+      "scanner": "GeminiGXL 16, Philips",
+      "total_samples": 72
+    },
+    "CHUV": {
+      "scanner": "Siemens Biograph mCT 40 TOF",
+      "total_samples": 53
+    },
+    "CHUM": {
+      "scanner": "Discovery D690 TOF",
+      "total_samples": 56
+    },
+    "CHUP": {
+      "scanner": "Discovery D690 TOF",
+      "total_samples": 72
+    },
+    "MDA": {
+      "scanner": "Discovery HR, RX, ST, and STE",
+      "total_samples": 198
+    },
+    "HGJ": {
+      "scanner": "Discovery ST, GE Healthcare",
+      "total_samples": 55
+    },
+    "HMR": {
+      "scanner": "Discover ST, GE Healthcare",
+      "total_samples": 18
+    }
+  },
+  "expected_splits": {
+    "pretraining": {
+      "train": 202,
+      "val": 51
+    },
+    "multimodal_adaptation": {
+      "train": 158,
+      "val": 40
+    },
+    "continual_learning_task1": {
+      "train": 44,
+      "val": 11
+    },
+    "continual_learning_task2": {
+      "train": 14,
+      "val": 4
+    }
+  }
+}
